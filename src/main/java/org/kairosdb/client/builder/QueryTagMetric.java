@@ -3,8 +3,11 @@ package org.kairosdb.client.builder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 import static org.kairosdb.client.util.Preconditions.checkArgument;
@@ -51,18 +54,35 @@ public class QueryTagMetric
 	 * @param values tag values
 	 * @return the metric
 	 */
-	public QueryTagMetric addTag(String name, String... values)
+	public QueryTagMetric addTag(String name, Set<String> values)
 	{
 		checkNotNullOrEmpty(name, "name cannot be null or empty");
-		checkArgument(values.length > 0, "value must be greater than 0");
+		checkArgument(values.size() > 0, "value must be greater than 0");
 
 		for (String value : values)
 		{
 			checkNotNullOrEmpty(value, "value cannot be null or empty");
 		}
 
-		tags.putAll(name, Arrays.asList(values));
+		tags.putAll(name, values);
 
+		return (this);
+	}
+	
+	public QueryTagMetric addTag(String name, String... values)
+	{
+		checkNotNullOrEmpty(name, "name cannot be null or empty");
+		checkArgument(values.length > 0, "value must be greater than 0");
+		ArrayList<String> valueList = new ArrayList<>();
+		for (String value : values)
+		{
+			checkNotNullOrEmpty(value, "value cannot be null or empty");
+			if(!valueList.contains(value))
+			valueList.add(value);
+		}
+		
+		tags.putAll(name, valueList);
+		
 		return (this);
 	}
 
